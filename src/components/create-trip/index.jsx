@@ -1,16 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   SelectBudgetOptions,
   SelectTravelesList,
 } from "../../constants/options";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { generateTravelPlan } from "../../service/AIModel";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFormData({
@@ -22,12 +24,54 @@ function CreateTrip() {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
-  
-  const OnGenerateTrip = () => {
-    if (formData?.noOfDays > 5) {
+
+  const OnGenerateTrip = async () => {
+    // Validation
+    if (
+      !formData?.location ||
+      !formData?.NoOfDays ||
+      !formData?.budget ||
+      !formData?.traveler
+    ) {
+      toast("Please fill all the fields");
       return;
     }
-    console.log(formData);
+
+    if (formData?.NoOfDays > 5) {
+      toast("Please enter 5 days or less");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Extract values for the AI function
+      const location = formData.location?.label || formData.location;
+      const days = parseInt(formData.NoOfDays);
+      const traveler = formData.traveler;
+      const budget = formData.budget;
+
+      console.log("Generating trip for:", { location, days, traveler, budget });
+
+      // Call the AI service
+      const tripPlan = await generateTravelPlan(
+        location,
+        days,
+        traveler,
+        budget,
+      );
+
+      console.log("Generated trip plan:", tripPlan);
+
+      // Here you can store the trip plan in state or navigate to a results page
+      // For now, just show success message
+      toast("Trip plan generated successfully!");
+    } catch (error) {
+      console.error("Error generating trip:", error);
+      toast("Failed to generate trip plan. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -104,7 +148,9 @@ function CreateTrip() {
         </div>
       </div>
       <div className="my-10 flex justify-end">
-        <Button onClick={OnGenerateTrip}>Generate Trip</Button>
+        <Button onClick={OnGenerateTrip} disabled={loading}>
+          {loading ? "Generating Trip..." : "Generate Trip"}
+        </Button>
       </div>
     </div>
   );
