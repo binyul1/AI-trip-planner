@@ -7,10 +7,14 @@ import {
   SelectTravelesList,
 } from "../../constants/options";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { buildTravelPrompt, generateTravelPlan } from "@/service/AIModel";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [tripResult, setTripResult] = useState(null);
 
   const handleInputChange = (name, value) => {
     setFormData({
@@ -22,12 +26,32 @@ function CreateTrip() {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
-  
-  const OnGenerateTrip = () => {
-    if (formData?.noOfDays > 5) {
+
+  const OnGenerateTrip = async () => {
+    if (!formData?.location || !formData?.budget || !formData?.traveler) {
+      toast.error("Please fill all the fields");
       return;
     }
-    console.log(formData);
+
+    if (formData?.noOfDays > 5) {
+      toast.error("Number of days must be 5 or less");
+      return;
+    }
+
+    const prompt = buildTravelPrompt(formData);
+    setLoading(true);
+    setTripResult(null);
+
+    try {
+      const result = await generateTravelPlan(prompt);
+      setTripResult(result);
+      toast.success("Trip generated successfully");
+    } catch (error) {
+      console.error("Generate trip failed:", error);
+      toast.error(error.message || "Could not generate trip");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -63,7 +87,9 @@ function CreateTrip() {
           <Input
             placeholder={"Ex.3"}
             type="number"
-            onChange={(e) => handleInputChange("NoOfDays", e.target.value)}
+            onChange={(e) =>
+              handleInputChange("noOfDays", Number(e.target.value))
+            }
           />
         </div>
         <div>
@@ -104,8 +130,19 @@ function CreateTrip() {
         </div>
       </div>
       <div className="my-10 flex justify-end">
-        <Button onClick={OnGenerateTrip}>Generate Trip</Button>
+        <Button onClick={OnGenerateTrip} disabled={loading}>
+          {loading ? "Generating..." : "Generate Trip"}
+        </Button>
       </div>
+
+      {tripResult ? (
+        <div className="mt-8 rounded-xl border p-6 bg-white shadow-sm">
+          <h3 className="mb-4 text-2xl font-semibold">Generated Trip</h3>
+          <pre className="whitespace-pre-wrap text-sm text-gray-700">
+            {JSON.stringify(tripResult, null, 2)}
+          </pre>
+        </div>
+      ) : null}
     </div>
   );
 }

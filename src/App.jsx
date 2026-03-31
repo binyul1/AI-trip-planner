@@ -1,16 +1,14 @@
-import './App.css'
-import Hero from './components/custom/Hero'
-import { Button } from "./components/ui/button"
+import "./App.css";
+import Hero from "./components/custom/Hero";
 
 function App() {
-
   return (
     <>
-    {/* hero */}
-    <Hero />
-    {/* hero */}
+      {/* hero */}
+      <Hero />
+      {/* hero */}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
