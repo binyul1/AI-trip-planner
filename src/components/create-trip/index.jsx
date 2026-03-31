@@ -7,12 +7,24 @@ import {
 } from "../../constants/options";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import axios from "axios";
 import { generateTravelPlan } from "../../service/AIModel";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import Logo from "../../assets/logo.jpg";
+import { FcGoogle } from "react-icons/fc";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [openDailog, setOpenDailog] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFormData({
@@ -25,7 +37,19 @@ function CreateTrip() {
     console.log(formData);
   }, [formData]);
 
+  const login = useGoogleLogin({
+    flow: "implicit",
+    scope: "openid profile email",
+    onSuccess: (response) => GetUserProfile(response),
+    onError: (error) => console.log(error),
+  });
+
   const OnGenerateTrip = async () => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      setOpenDailog(true);
+      return;
+    }
     // Validation
     if (
       !formData?.location ||
@@ -71,6 +95,40 @@ function CreateTrip() {
       toast("Failed to generate trip plan. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const GetUserProfile = async (tokenInfo) => {
+    const accessToken = tokenInfo?.access_token || tokenInfo?.credential;
+
+    if (!accessToken) {
+      console.error("Google login did not return an access token", tokenInfo);
+      return;
+    }
+
+    try {
+      const resp = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
+        },
+      );
+
+      const userData = resp.data;
+      const storedUser = { data: userData };
+
+      localStorage.setItem("user", JSON.stringify(storedUser));
+      setOpenDailog(false);
+      toast("Login successful");
+      console.log("Google user profile:", storedUser);
+      return storedUser;
+    } catch (error) {
+      console.error("GetUserProfile error:", error);
+      toast("Unable to fetch Google user profile");
+      throw error;
     }
   };
 
@@ -152,6 +210,27 @@ function CreateTrip() {
           {loading ? "Generating Trip..." : "Generate Trip"}
         </Button>
       </div>
+      <Dialog open={openDailog} onOpenChange={setOpenDailog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign In with Google</DialogTitle>
+            <DialogDescription>
+              <img src={Logo} alt="Logo" className="size-15 rounded-[50%] " />
+              <span className="block mt-3">
+                Sign in to the App with Google authentication securely
+              </span>
+              <Button
+                className="w-full mt-5 flex gap-4 items-center"
+                onClick={login}
+              >
+                {" "}
+                <FcGoogle className="h-7 w-7" />
+                Sign In with Google
+              </Button>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

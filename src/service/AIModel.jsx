@@ -11,6 +11,8 @@ Give me a Hotels options list with HotelName, Hotel address, Price, hotel image 
 
 IMPORTANT: Return ONLY valid JSON without any markdown formatting, code blocks, or additional text. Start directly with { and end with }.`;
 
+  console.log("Final prompt:", prompt);
+
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -22,16 +24,18 @@ IMPORTANT: Return ONLY valid JSON without any markdown formatting, code blocks, 
     console.log("Raw AI response:", responseText);
 
     // Remove markdown code blocks if present
-    if (responseText.includes('```json')) {
+    if (responseText.includes("```json")) {
       const jsonMatch = responseText.match(/```json\s*(\{[\s\S]*?\})\s*```/);
       if (jsonMatch) {
         responseText = jsonMatch[1];
       } else {
         // Fallback: remove all markdown
-        responseText = responseText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        responseText = responseText
+          .replace(/^```json\s*/, "")
+          .replace(/\s*```$/, "");
       }
-    } else if (responseText.startsWith('```')) {
-      responseText = responseText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    } else if (responseText.startsWith("```")) {
+      responseText = responseText.replace(/^```\s*/, "").replace(/\s*```$/, "");
     }
 
     // Clean up any remaining whitespace
