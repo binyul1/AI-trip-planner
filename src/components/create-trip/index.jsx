@@ -19,6 +19,9 @@ import {
 } from "@/components/ui/dialog";
 import Logo from "../../assets/logo.jpg";
 import { FcGoogle } from "react-icons/fc";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../service/firebaseConfig";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
@@ -60,13 +63,12 @@ function CreateTrip() {
       toast("Please fill all the fields");
       return;
     }
-
+    setLoading(true);
     if (formData?.NoOfDays > 5) {
       toast("Please enter 5 days or less");
+      setLoading(false);
       return;
     }
-
-    setLoading(true);
 
     try {
       // Extract values for the AI function
@@ -87,15 +89,29 @@ function CreateTrip() {
 
       console.log("Generated trip plan:", tripPlan);
 
-      // Here you can store the trip plan in state or navigate to a results page
-      // For now, just show success message
+      await SaveAiTrip(tripPlan); // <-- save to Firestore
+
       toast("Trip plan generated successfully!");
+      setLoading(false);
     } catch (error) {
       console.error("Error generating trip:", error);
       toast("Failed to generate trip plan. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const SaveAiTrip = async (TripPlan) => {
+    setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const docID = Date.now().toString(); // Generate a unique document ID based on the current timestamp
+    await setDoc(doc(db, "AITRIPS", docID), {
+      userSelection: formData,
+      tripPlan: TripPlan,
+      userEmail: user?.data?.email,
+      id: docID,
+    });
+    setLoading(false);
   };
 
   const GetUserProfile = async (tokenInfo) => {
@@ -105,31 +121,23 @@ function CreateTrip() {
       console.error("Google login did not return an access token", tokenInfo);
       return;
     }
-
-    try {
-      const resp = await axios.get(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accept: "application/json",
-          },
+    const resp = await axios.get(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
         },
-      );
+      },
+    );
 
-      const userData = resp.data;
-      const storedUser = { data: userData };
+    const userData = resp.data;
+    const storedUser = { data: userData };
 
-      localStorage.setItem("user", JSON.stringify(storedUser));
-      setOpenDailog(false);
-      toast("Login successful");
-      console.log("Google user profile:", storedUser);
-      return storedUser;
-    } catch (error) {
-      console.error("GetUserProfile error:", error);
-      toast("Unable to fetch Google user profile");
-      throw error;
-    }
+    localStorage.setItem("user", JSON.stringify(storedUser));
+    console.log("Google user profile:", storedUser);
+    OnGenerateTrip();
+    setOpenDailog(false);
   };
 
   return (
@@ -207,7 +215,11 @@ function CreateTrip() {
       </div>
       <div className="my-10 flex justify-end">
         <Button onClick={OnGenerateTrip} disabled={loading}>
-          {loading ? "Generating Trip..." : "Generate Trip"}
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
         </Button>
       </div>
       <Dialog open={openDailog} onOpenChange={setOpenDailog}>
@@ -220,6 +232,7 @@ function CreateTrip() {
                 Sign in to the App with Google authentication securely
               </span>
               <Button
+                disabled={loading}
                 className="w-full mt-5 flex gap-4 items-center"
                 onClick={login}
               >
