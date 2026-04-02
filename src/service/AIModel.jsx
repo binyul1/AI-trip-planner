@@ -28,6 +28,7 @@ Each itinerary item must use these keys:
 - ticketPricing
 - rating
 - travelTime
+- time
 structure for itinerary items must be as follows:
 {
   "days": [

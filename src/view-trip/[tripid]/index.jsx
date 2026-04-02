@@ -5,6 +5,7 @@ import { db } from "../../service/firebaseConfig";
 import { useState } from "react";
 import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
+import PlacesToVisit from "../components/PlacesToVisit";
 
 function Viewtrip() {
   const { tripid } = useParams();
@@ -36,6 +37,7 @@ function Viewtrip() {
       {/* Recommended Hotels */}
       <Hotels trip={trip} />
       {/* Daily Plans */}
+      <PlacesToVisit trip={trip} />
       {/*Footers*/}
     </div>
   );
