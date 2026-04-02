@@ -6,10 +6,45 @@ const ai = new GoogleGenAI({
 
 async function generateTravelPlan(location, days, traveler, budget) {
   const prompt = `Generate Travel Plan for Location: ${location}, for ${days} Days for ${traveler} with a ${budget} budget.
+provide at least 4 hotel recomendations.
+Return exactly valid JSON with these top-level keys: hotels and itinerary.
 
-Give me a Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, rating, Time travel each Of the location for ${days} days with each day plan With best time visit in JSON format.
+Each hotel object must use these keys:
+- hotelName
+- address
+- description
+- geoCoordinates
+- imageUrl
+- price
+- rating
 
-IMPORTANT: Return ONLY valid JSON without any markdown formatting, code blocks, or additional text. Start directly with { and end with }.`;
+Each itinerary item must use these keys:
+- day
+- placeName
+- description
+- address
+- imageUrl
+- geoCoordinates
+- ticketPricing
+- rating
+- travelTime
+structure for itinerary items must be as follows:
+{
+  "days": [
+    {
+      "day": 1,
+      "places": [ ... ]
+    },
+    {
+      "day": 2,
+      "places": [ ... ]
+    }
+  ]
+}
+
+geoCoordinates should be an object with lat and lng values.
+
+Return ONLY valid JSON without markdown, code fences, or any extra text. Start directly with { and end with }.`;
 
   console.log("Final prompt:", prompt);
 

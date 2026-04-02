@@ -8,7 +8,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAFMgRni0JKU7fNNgBpGgcSnOOVTi5awwE",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "ai-trip-planner-5eafb.firebaseapp.com",
   projectId: "ai-trip-planner-5eafb",
   storageBucket: "ai-trip-planner-5eafb.firebasestorage.app",

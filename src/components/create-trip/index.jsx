@@ -22,12 +22,15 @@ import { FcGoogle } from "react-icons/fc";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 function CreateTrip() {
   const [place, setPlace] = useState();
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [openDailog, setOpenDailog] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (name, value) => {
     setFormData({
@@ -89,7 +92,7 @@ function CreateTrip() {
 
       console.log("Generated trip plan:", tripPlan);
 
-      await SaveAiTrip(tripPlan); // <-- save to Firestore
+      await SaveAiTrip(tripPlan);
 
       toast("Trip plan generated successfully!");
       setLoading(false);
@@ -104,7 +107,7 @@ function CreateTrip() {
   const SaveAiTrip = async (TripPlan) => {
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("user"));
-    const docID = Date.now().toString(); // Generate a unique document ID based on the current timestamp
+    const docID = Date.now().toString();
     await setDoc(doc(db, "AITRIPS", docID), {
       userSelection: formData,
       tripPlan: TripPlan,
@@ -112,6 +115,7 @@ function CreateTrip() {
       id: docID,
     });
     setLoading(false);
+    navigate("/view-trip/" + docID);
   };
 
   const GetUserProfile = async (tokenInfo) => {
