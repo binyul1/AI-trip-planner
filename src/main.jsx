@@ -9,6 +9,7 @@ import Header from "./components/custom/Header.jsx";
 import CreateTrip from "./components/create-trip/index.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import Viewtrip from "./view-trip/[tripid]/index.jsx";
+import MyTrips from "./my-trips/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     path: "/view-trip/:tripid",
     element: <Viewtrip />,
   },
+  {
+    path: "/my-trips",
+    element: <MyTrips />
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

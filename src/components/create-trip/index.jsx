@@ -119,29 +119,45 @@ function CreateTrip() {
   };
 
   const GetUserProfile = async (tokenInfo) => {
+    console.log("tokenInfo from Google login:", tokenInfo);
+    
     const accessToken = tokenInfo?.access_token || tokenInfo?.credential;
 
     if (!accessToken) {
       console.error("Google login did not return an access token", tokenInfo);
       return;
     }
-    const resp = await axios.get(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json",
+    
+    try {
+      const resp = await axios.get(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: "application/json",
+          },
         },
-      },
-    );
+      );
 
-    const userData = resp.data;
-    const storedUser = { data: userData };
+      console.log("Full user data from Google:", resp.data);
+      
+      const userData = resp.data;
+      const storedUser = {
+        data: userData,
+        id: userData?.id || userData?.sub,
+        email: userData?.email,
+        name: userData?.name,
+        picture: userData?.picture,
+      };
 
-    localStorage.setItem("user", JSON.stringify(storedUser));
-    console.log("Google user profile:", storedUser);
-    OnGenerateTrip();
-    setOpenDailog(false);
+      localStorage.setItem("user", JSON.stringify(storedUser));
+      console.log("Stored user object:", storedUser);
+      OnGenerateTrip();
+      setOpenDailog(false);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      alert("Failed to fetch user profile. Please try signing in again.");
+    }
   };
 
   return (
