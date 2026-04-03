@@ -2,11 +2,9 @@ import React, { useEffect, useState } from "react";
 import placeholder from "../../assets/travel.jpg";
 import { Button } from "../../components/ui/button";
 import { CiShare2 } from "react-icons/ci";
-import { GetPlaceDetails } from "../../service/GlobalApi";
+import { GetPlaceDetails, PHOTO_REF_URL } from "../../service/GlobalApi";
 
-const PHOTO_REF_URL =
-  "https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=" +
-  import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
+
 function InfoSection({ trip }) {
 
   const[photoUrl, setPhotoUrl] = useState()
@@ -31,7 +29,7 @@ function InfoSection({ trip }) {
   return (
     <div className="">
       <img
-        src={photoUrl}
+        src={photoUrl|| placeholder}
         alt="Trip Image"
         className="h-[340px] w-full object-cover rounded"
       />
