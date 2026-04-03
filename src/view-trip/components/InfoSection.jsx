@@ -1,20 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import placeholder from "../../assets/travel.jpg";
 import { Button } from "../../components/ui/button";
 import { CiShare2 } from "react-icons/ci";
+import { GetPlaceDetails } from "../../service/GlobalApi";
 
+const PHOTO_REF_URL =
+  "https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key=" +
+  import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 function InfoSection({ trip }) {
+
+  const[photoUrl, setPhotoUrl] = useState()
+  useEffect(() => {
+    trip && GetPlacePhoto();
+  }, [trip]);
+
+  const GetPlacePhoto = async () => {
+    const data = {
+      textQuery: trip?.userSelection?.location?.label,
+    };
+    const result = await GetPlaceDetails(data).then((resp) => {
+      console.log(resp.data.places[0].photos[3].name);
+
+      const PhotoUrl = PHOTO_REF_URL.replace(
+        "{NAME}",resp.data.places[0].photos[3].name,
+      );
+      setPhotoUrl(PhotoUrl);
+    });
+  };
+
   return (
     <div className="">
       <img
-        src={placeholder}
+        src={photoUrl}
         alt="Trip Image"
         className="h-[340px] w-full object-cover rounded"
       />
       <div className="justify-between flex items-start mt-5">
         <div className="my-5 flex flex-col gap-2">
           <h2 className="font-bold text-2xl">
-            {trip?.userSelection?.location?.label }
+            {trip?.userSelection?.location?.label}
           </h2>
           <div className="flex gap-5">
             <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
@@ -28,11 +52,12 @@ function InfoSection({ trip }) {
             </h2>
           </div>
         </div>
-        <Button > <CiShare2 /></Button>
+        <Button>
+          {" "}
+          <CiShare2 />
+        </Button>
       </div>
-      <div>
-
-      </div>
+      <div></div>
     </div>
   );
 }
