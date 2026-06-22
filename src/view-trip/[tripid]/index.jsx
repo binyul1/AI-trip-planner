@@ -11,9 +11,8 @@ function Viewtrip() {
   const { tripid } = useParams();
   const [trip, setTrip] = useState({});
 
-  useEffect(() => {()=>{
-     tripid && GetTripData();
-  }
+  useEffect(() => {
+    tripid && GetTripData();
   }, [tripid]);
 
   /**
