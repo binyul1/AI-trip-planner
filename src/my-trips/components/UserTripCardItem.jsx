@@ -25,12 +25,12 @@ function UserTripCardItem({ trip }) {
   };
 
   return (
-    <Link to={'/view-trip/'+trip?.id}>
+    <Link to={"/view-trip/" + trip?.id}>
       <div className="hover:scale-105 transition-all h-[300px] bg-slate-100 rounded-lg p-2">
         <img
           src={photoUrl || logo}
           alt="logo"
-          className="size-48 object-cover rounded-xl"
+          className="w-full h-[220px] md:h-[210px] size-48 object-cover rounded-xl"
         />
         <div>
           <h2 className="mt-2">{trip?.userSelection?.location?.label}</h2>

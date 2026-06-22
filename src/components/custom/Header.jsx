@@ -101,7 +101,7 @@ function Header() {
   };
 
   return (
-    <div className="p-3 shadow-sm flex justify-between items-center px-5">
+    <div className="sm:px-20 sm:flex md:px-35 lg:px-55 xl:px-68 px-5 mt-10 justify-between">
       <a href="/">
         <img src={logo} alt="logo" className="size-15 rounded-[50%] " />
       </a>

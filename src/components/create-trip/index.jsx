@@ -120,14 +120,14 @@ function CreateTrip() {
 
   const GetUserProfile = async (tokenInfo) => {
     console.log("tokenInfo from Google login:", tokenInfo);
-    
+
     const accessToken = tokenInfo?.access_token || tokenInfo?.credential;
 
     if (!accessToken) {
       console.error("Google login did not return an access token", tokenInfo);
       return;
     }
-    
+
     try {
       const resp = await axios.get(
         "https://www.googleapis.com/oauth2/v2/userinfo",
@@ -140,7 +140,7 @@ function CreateTrip() {
       );
 
       console.log("Full user data from Google:", resp.data);
-      
+
       const userData = resp.data;
       const storedUser = {
         data: userData,
@@ -161,7 +161,7 @@ function CreateTrip() {
   };
 
   return (
-    <div className="sm:px-10 md:px-32 lg:px-56 xl:px-10 px-5 mt-10">
+    <div className="sm:px-20 sm:flex sm:flex-col md:px-35 lg:px-55 xl:px-68 px-5 mt-10">
       <h2 className="font-bold text-3xl">
         Tell us your travel preferences 🏕️🌴
       </h2>

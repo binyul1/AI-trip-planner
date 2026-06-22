@@ -6,7 +6,6 @@ import { useState } from "react";
 import InfoSection from "../components/InfoSection";
 import Hotels from "../components/Hotels";
 import PlacesToVisit from "../components/PlacesToVisit";
-import Footer from "../components/Footer";
 
 function Viewtrip() {
   const { tripid } = useParams();
@@ -39,8 +38,6 @@ function Viewtrip() {
       <Hotels trip={trip} />
       {/* Daily Plans */}
       <PlacesToVisit trip={trip} />
-      {/*Footers*/}
-      <Footer trip={trip}/>
     </div>
   );
 }
