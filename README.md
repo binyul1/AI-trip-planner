@@ -1,16 +1,33 @@
-# React + Vite
+# AI Trip Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI Trip Planner is a React and Vite travel app that helps users generate personalized itineraries with Google sign-in, AI trip planning, and Firebase trip storage.
 
-Currently, two official plugins are available:
+## Screenshots
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Home screen
+   ![Home screen](src/assets/Screenshot%202026-06-22%20225811.png)
 
-## React Compiler
+2. Trip preferences form
+   ![Trip preferences form](src/assets/Screenshot%202026-06-22%20225933.png)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Budget selection
+   ![Budget selection](src/assets/Screenshot%202026-06-22%20225933%20-%20Copy.png)
 
-## Expanding the ESLint configuration
+4. Traveler selection
+   ![Traveler selection](src/assets/Screenshot%202026-06-22%20230017%20-%20Copy.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+5. Google sign-in dialog
+   ![Google sign-in dialog](src/assets/Screenshot%202026-06-22%20230025%20-%20Copy.png)
+
+6. Generated trip preview
+   ![Generated trip preview](src/assets/Screenshot%202026-06-22%20230105.png)
+
+7. Saved trip details
+   ![Saved trip details](src/assets/Screenshot%202026-06-22%20230118.png)
+
+## Project Summary
+
+- Create custom trip plans based on destination, duration, budget, and travel group.
+- Sign in with Google before generating and saving trips.
+- Store trip data in Firebase for each user.
+- Use AI to generate structured travel recommendations.
